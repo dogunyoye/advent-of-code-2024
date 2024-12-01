@@ -7,7 +7,7 @@ def part_one(data) -> int:
     left, right = [], []
     result = 0
     for line in data.splitlines():
-        nums = line.split("   ")
+        nums = line.split()
         left.append(int(nums[0]))
         right.append(int(nums[1]))
 
@@ -24,7 +24,7 @@ def part_two(data) -> int:
     left, right = [], []
     result = 0
     for line in data.splitlines():
-        nums = line.split("   ")
+        nums = line.split()
         left.append(int(nums[0]))
         right.append(int(nums[1]))
 
