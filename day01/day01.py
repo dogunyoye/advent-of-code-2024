@@ -1,4 +1,5 @@
 import os.path
+from collections import Counter
 
 DATA = os.path.join(os.path.dirname(__file__), 'day01.txt')
 
@@ -29,7 +30,7 @@ def part_two(data) -> int:
         right.append(int(nums[1]))
 
     for n in left:
-        result += n * right.count(n)
+        result += n * Counter(right)[n]
 
     return result
 
