@@ -9,9 +9,7 @@ def __is_safe(level) -> bool:
     for i in range(len(level) - 1):
         diffs.append(level[i] - level[i + 1])
 
-    if all(val < 0 for val in diffs) or all(val > 0 for val in diffs):
-        return all(-3 <= val <= -1 for val in diffs) or all(1 <= val <= 3 for val in diffs)
-    return False
+    return all(-3 <= val <= -1 for val in diffs) or all(1 <= val <= 3 for val in diffs)
 
 
 def __can_be_made_safe(level) -> bool:
