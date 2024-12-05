@@ -44,6 +44,7 @@ def part_one(data) -> int:
                 break
         if valid:
             result += u[len(u)//2]
+
     return result
 
 
@@ -83,6 +84,7 @@ def part_two(data) -> int:
                     break
             if valid:
                 result += iu[len(iu)//2]
+
     return result
 
 
