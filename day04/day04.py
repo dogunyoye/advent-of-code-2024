@@ -49,17 +49,9 @@ def __find_xmas_properly(coord, grid) -> int:
     sw = (coord[0] + 1, coord[1] - 1)
     nw = (coord[0] - 1, coord[1] - 1)
 
-    if ne in grid:
-        xmas += grid[ne]
-
-    if se in grid:
-        xmas += grid[se]
-
-    if sw in grid:
-        xmas += grid[sw]
-
-    if nw in grid:
-        xmas += grid[nw]
+    for p in [ne, se, sw, nw]:
+        if p in grid:
+            xmas += grid[p]
 
     c = Counter(xmas)
     if c['S'] == 2 and c['M'] == 2 and (grid[nw] == grid[ne] or grid[ne] == grid[se]):
