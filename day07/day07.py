@@ -3,7 +3,7 @@ from itertools import product
 
 DATA = os.path.join(os.path.dirname(__file__), 'day07.txt')
 
-completed = []
+completed = set()
 part1 = 0
 
 
@@ -18,15 +18,19 @@ def part_one(data) -> int:
             equation = ""
             for i in range(1, len(nums)):
                 equation += str(nums[i])
-                if '+' in equation or '*' in equation:
-                    equation = str(eval(equation))
+                if '+' in equation:
+                    parts = equation.split("+")
+                    equation = str(int(parts[0]) + int(parts[1]))
+                elif '*' in equation:
+                    parts = equation.split("*")
+                    equation = str(int(parts[0]) * int(parts[1]))
                 if i <= len(p):
                     equation += p[i - 1]
 
             if int(equation) == test_val:
                 result += test_val
                 global completed
-                completed.append(idx)
+                completed.add(idx)
                 break
 
     global part1
