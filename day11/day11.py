@@ -47,7 +47,7 @@ def __blink_optimised(numbers):
                 num_str = str(k)
                 half = len(num_str) // 2
                 left, right = num_str[0:half], num_str[half:]
-                numbers[k] -= 1 * v
+                numbers[k] -= v
                 numbers[int(left)] += v
                 numbers[int(right)] += v
             else:
