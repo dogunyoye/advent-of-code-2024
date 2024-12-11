@@ -51,8 +51,7 @@ def __bfs(grid, start) -> int:
 
 
 def __dfs(grid, start) -> int:
-    stack, visited = [], set()
-    stack.append(start)
+    stack = [start]
     score = 0
 
     while len(stack) != 0:
@@ -64,11 +63,10 @@ def __dfs(grid, start) -> int:
             score += 1
             continue
 
-        if current_position not in visited:
-            neighbors = [(i, j - 1), (i - 1, j), (i, j + 1), (i + 1, j)]
-            for n in neighbors:
-                if n in grid and grid[n] != '.' and int(grid[n]) == int(level) + 1:
-                    stack.append(n)
+        neighbors = [(i, j - 1), (i - 1, j), (i, j + 1), (i + 1, j)]
+        for n in neighbors:
+            if n in grid and grid[n] != '.' and int(grid[n]) == int(level) + 1:
+                stack.append(n)
 
     return score
 
