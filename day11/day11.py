@@ -41,18 +41,18 @@ def __blink_optimised(numbers):
     for k, v in copy.deepcopy(numbers).items():
         if v > 0:
             if k == 0:
-                numbers[0] -= 1 * v
-                numbers[1] += 1 * v
+                numbers[0] -= v
+                numbers[1] += v
             elif len(str(k)) % 2 == 0:
                 num_str = str(k)
                 half = len(num_str) // 2
                 left, right = num_str[0:half], num_str[half:]
                 numbers[k] -= 1 * v
-                numbers[int(left)] += 1 * v
-                numbers[int(right)] += 1 * v
+                numbers[int(left)] += v
+                numbers[int(right)] += v
             else:
-                numbers[k] -= 1 * v
-                numbers[k*2024] += 1 * v
+                numbers[k] -= v
+                numbers[k*2024] += v
 
 
 def part_one(data) -> int:
