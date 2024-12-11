@@ -38,21 +38,25 @@ def __blink_naive(numbers):
 
 
 def __blink_optimised(numbers):
-    for k, v in copy.deepcopy(numbers).items():
+    new_stones = defaultdict(int)
+    for k, v in numbers.items():
         if v > 0:
             if k == 0:
-                numbers[0] -= v
-                numbers[1] += v
+                new_stones[0] -= v
+                new_stones[1] += v
             elif len(str(k)) % 2 == 0:
                 num_str = str(k)
                 half = len(num_str) // 2
                 left, right = num_str[0:half], num_str[half:]
-                numbers[k] -= v
-                numbers[int(left)] += v
-                numbers[int(right)] += v
+                new_stones[k] -= v
+                new_stones[int(left)] += v
+                new_stones[int(right)] += v
             else:
-                numbers[k] -= v
-                numbers[k*2024] += v
+                new_stones[k] -= v
+                new_stones[k*2024] += v
+
+    for k, v in new_stones.items():
+        numbers[k] += v
 
 
 def part_one(data) -> int:
