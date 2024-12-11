@@ -39,13 +39,6 @@ def __build_disk_map(data) -> tuple:
     return disk_map, free_space_indices, disk_map_sizes
 
 
-def __compacted(disk_map) -> bool:
-    for idx, c in enumerate(disk_map):
-        if c[0] == '.' and idx != len(disk_map) - 1 and disk_map[idx + 1][0] != '.':
-            return False
-    return True
-
-
 def __has_free_blocks(disk_map, f_idx, f_size) -> tuple:
     free_blocks = 0
     start_idx = 0
@@ -70,8 +63,10 @@ def part_one(data) -> int:
     checksum = 0
 
     for idx, c in enumerate(reversed(disk_map)):
-        if len(free_space_indices) == 0 or __compacted(disk_copy):
+
+        if len(free_space_indices) == 0 or free_space_indices[0] > len(disk_copy) - idx - 1:
             break
+
         if c[0] != '.':
             disk_copy[free_space_indices.popleft()] = (c[0],)
             disk_copy[len(disk_copy) - idx - 1] = ('.',)
