@@ -59,19 +59,18 @@ def __has_free_blocks(disk_map, f_idx, f_size) -> tuple:
 
 def part_one(data) -> int:
     disk_map, free_space_indices, _ = __build_disk_map(data)
-    disk_copy = copy.deepcopy(disk_map)
     checksum = 0
 
     for idx, c in enumerate(reversed(disk_map)):
 
-        if len(free_space_indices) == 0 or free_space_indices[0] > len(disk_copy) - idx - 1:
+        if len(free_space_indices) == 0 or free_space_indices[0] > len(disk_map) - idx - 1:
             break
 
         if c[0] != '.':
-            disk_copy[free_space_indices.popleft()] = (c[0],)
-            disk_copy[len(disk_copy) - idx - 1] = ('.',)
+            disk_map[free_space_indices.popleft()] = (c[0],)
+            disk_map[len(disk_map) - idx - 1] = ('.',)
 
-    for idx, c in enumerate(disk_copy):
+    for idx, c in enumerate(disk_map):
         if c[0] != '.':
             checksum += idx * int(c[0])
 
