@@ -32,23 +32,22 @@ def __build_map(data) -> (dict, tuple):
 # - if it directly touches the region, that position is next to a side
 # - there could be numerous points touching the same side, so we want
 # to reduce that region face to a single representative point
-# - we do this by "sweeping" left/right or "up/down" to remove all but
+# - we do this by "sweeping" left/right or up/down to remove all but
 # one point on the same line
 # - at the end, for each direction (N, E, S, W) we will have a point per
 # side => the number of slides for the entire region
 def __calculate_number_of_sides(region) -> int:
     outer_region = set()
-    for p in region:
-        for dx in [-1, 0, 1]:
-            for dy in [-1, 0, 1]:
-                neighbour = (p[0] + dx, p[1] + dy)
-                if neighbour not in region and neighbour not in outer_region:
-                    outer_region.add(neighbour)
-
-    neighbour = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+    neighbours = [(-1, 0), (0, 1), (1, 0), (0, -1)]
     number_of_sides = 0
 
-    for idx, n in enumerate(neighbour):
+    for p in region:
+        for n in neighbours:
+            neighbour = (p[0] + n[0], p[1] + n[1])
+            if neighbour not in region and neighbour not in outer_region:
+                outer_region.add(neighbour)
+
+    for idx, n in enumerate(neighbours):
         sides = []
         for p in outer_region:
             pn = (p[0] + n[0], p[1] + n[1])
