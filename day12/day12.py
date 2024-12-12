@@ -26,6 +26,16 @@ def __build_map(data) -> (dict, tuple):
     return grid, starts
 
 
+# Idea here is to:
+# - build a bounding box around the region
+# - look for the N,E,S,W neighbour for every point in the bounding box
+# - if it directly touches the region, that position is next to a side
+# - there could be numerous points touching the same side, so we want
+# to reduce that region face to a single representative point
+# - we do this by "sweeping" left/right or "up/down" to remove all but
+# one point on the same line
+# - at the end, for each direction (N, E, S, W) we will have a point per
+# side => the number of slides for the entire region
 def __calculate_number_of_sides(region) -> int:
     outer_region = set()
     for p in region:
@@ -47,8 +57,7 @@ def __calculate_number_of_sides(region) -> int:
 
         side_regions = []
 
-        # North or south
-        if idx == 0 or idx == 2:  # sweep left and right
+        if idx == 0 or idx == 2:  # (North or South) sweep left and right
             while len(sides) != 0:
                 face_point = sides.pop()
                 points = []
@@ -65,7 +74,7 @@ def __calculate_number_of_sides(region) -> int:
                     sweep_right = (sweep_right[0], sweep_right[1] + 1)
 
                 side_regions.append(points)
-        else:  # sweep up and down
+        else:  # (East and West) sweep up and down
             while len(sides) != 0:
                 face_point = sides.pop()
                 points = []
