@@ -17,11 +17,11 @@ def __print_grid(grid):
 def __build_map(data) -> (dict, tuple):
     i = 0
     grid = {}
-    starts = deque()
+    starts = set()
     for line in data.splitlines():
         for j, c in enumerate(line):
             grid[(i, j)] = c
-            starts.append((i, j))
+            starts.add((i, j))
         i += 1
     return grid, starts
 
@@ -98,7 +98,7 @@ def __calculate_number_of_sides(region) -> int:
 
 def __cost_of_plot(grid, starts, is_part_two) -> int:
     queue, visited = deque(), set()
-    start = starts.popleft()
+    start = starts.pop()
     queue.append(start)
     area, perimeter = 0, 0
 
