@@ -45,8 +45,8 @@ def __move_robots(robots, velocities, max_x, max_y):
 
 def part_one(data) -> int:
     (robots, velocities, max_x, max_y) = __build_robots_map(data)
-
     seconds = 0
+
     while seconds != 100:
         __move_robots(robots, velocities, max_x, max_y)
         seconds += 1
