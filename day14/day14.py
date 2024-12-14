@@ -47,18 +47,14 @@ def part_one(data) -> int:
     (robots, velocities, max_x, max_y) = __build_robots_map(data)
     __move_robots(robots, velocities, 100, max_x, max_y)
 
-    top_left = (0, (max_x / 2) - 1, 0, (max_y / 2) - 1)
-    top_right = ((max_x / 2) + 1, max_x, 0, (max_y / 2) - 1)
-    bottom_left = (0, (max_x / 2) - 1, (max_y / 2) + 1, max_y)
-    bottom_right = ((max_x / 2) + 1, max_x, (max_y / 2) + 1, max_y)
-
     result = 1
-    for q in [top_left, top_right, bottom_left, bottom_right]:
-        count = 0
-        for v in robots.values():
-            if q[0] <= v[0] <= q[1] and q[2] <= v[1] <= q[3]:
-                count += 1
-        result *= count
+    for xbound in [(0, (max_x / 2) - 1), ((max_x / 2) + 1, max_x)]:
+        for ybound in [(0, (max_y / 2) - 1), ((max_y / 2) + 1, max_y)]:
+            count = 0
+            for v in robots.values():
+                if xbound[0] <= v[0] <= xbound[1] and ybound[0] <= v[1] <= ybound[1]:
+                    count += 1
+            result *= count
 
     return result
 
