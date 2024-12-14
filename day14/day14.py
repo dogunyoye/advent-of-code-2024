@@ -1,6 +1,6 @@
 import os.path
-import sys
 import re
+import sys
 
 DATA = os.path.join(os.path.dirname(__file__), 'day14.txt')
 
@@ -27,7 +27,7 @@ def __build_robots_map(data) -> (dict, dict, int, int):
     max_x, max_y = -sys.maxsize, -sys.maxsize
 
     for line in data.splitlines():
-        (x, y, x_vel, y_vel) = re.findall(r'p=(-?\d+),(-?\d+) v=(-?\d+),(-?\d+)', line)[0]
+        (x, y, x_vel, y_vel) = re.findall(r'p=(\d+),(\d+) v=(-?\d+),(-?\d+)', line)[0]
         robots[robot_id] = (int(x), int(y))
         velocities[robot_id] = (int(x_vel), int(y_vel))
         max_x = max(max_x, int(x))
