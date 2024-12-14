@@ -37,19 +37,15 @@ def __build_robots_map(data) -> (dict, dict, int, int):
     return robots, velocities, max_x, max_y
 
 
-def __move_robots(robots, velocities, max_x, max_y):
+def __move_robots(robots, velocities, seconds, max_x, max_y):
     for k, v in robots.items():
         (x_vel, y_vel) = velocities[k]
-        robots[k] = (((v[0] + x_vel) % (max_x + 1)), ((v[1] + y_vel) % (max_y + 1)))
+        robots[k] = (((v[0] + (seconds * x_vel)) % (max_x + 1)), ((v[1] + (seconds * y_vel)) % (max_y + 1)))
 
 
 def part_one(data) -> int:
     (robots, velocities, max_x, max_y) = __build_robots_map(data)
-    seconds = 0
-
-    while seconds != 100:
-        __move_robots(robots, velocities, max_x, max_y)
-        seconds += 1
+    __move_robots(robots, velocities, 100, max_x, max_y)
 
     top_left = (0, (max_x / 2) - 1, 0, (max_y / 2) - 1)
     top_right = ((max_x / 2) + 1, max_x, 0, (max_y / 2) - 1)
@@ -72,7 +68,7 @@ def part_two(data) -> int:
     seconds = 0
 
     while True:
-        __move_robots(robots, velocities, max_x, max_y)
+        __move_robots(robots, velocities, 1, max_x, max_y)
         seconds += 1
         if len(set(robots.values())) == len(robots.keys()):
             return seconds
