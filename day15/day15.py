@@ -67,15 +67,14 @@ def __move_robot(grid, instructions, start):
             dxdy = (0, 1)
         elif movement == 'v':
             dxdy = (1, 0)
-        else:
+        elif movement == '<':
             dxdy = (0, -1)
+        else:
+            raise Exception("Unknown movement")
 
         next_position = (current_position[0] + dxdy[0], current_position[1] + dxdy[1])
 
         if grid[next_position] == '#':
-            # print(movement)
-            # __print_grid(grid)
-            # print()
             continue
 
         if grid[next_position] == '.':
@@ -98,9 +97,6 @@ def __move_robot(grid, instructions, start):
                     shifts += 1
 
                 if not space_available:
-                    # print(movement)
-                    # __print_grid(grid)
-                    # print()
                     continue
 
                 # step back into last previously occupied position
@@ -112,17 +108,134 @@ def __move_robot(grid, instructions, start):
                     grid[pos] = '.'
                     pos = (pos[0] + (-dxdy[0]), pos[1] + (-dxdy[1]))
             else:
-                # print(movement)
-                # __print_grid(grid)
-                # print()
                 continue
 
         grid[current_position] = '.'
         current_position = next_position
-        # print(movement)
-        # __print_grid(grid)
-        # print()
 
+
+def __move_robot_in_second_warehouse(grid, instructions, start):
+    current_position = start
+
+    while len(instructions) != 0:
+        movement = instructions.popleft()
+
+        if movement == '^':
+            dxdy = (-1, 0)
+        elif movement == '>':
+            dxdy = (0, 1)
+        elif movement == 'v':
+            dxdy = (1, 0)
+        else:
+            dxdy = (0, -1)
+
+        next_position = (current_position[0] + dxdy[0], current_position[1] + dxdy[1])
+
+        if grid[next_position] == '#':
+            continue
+
+        if grid[next_position] == '.':
+            grid[current_position] = '.'
+            grid[next_position] = '@'
+        elif grid[next_position] == '[' or grid[next_position] == ']':
+            boxes = __find_boxes(grid)
+            top_points = set()
+            to_move = set()
+            shifts, space_available = 0, False
+
+            positions = []
+            if (grid[next_position] == '[' or grid[next_position] == ']') and (movement == '^' or movement == 'v'):
+                positions.append(next_position)
+                positions.append(boxes[next_position])
+            else:
+                positions.append(next_position)
+
+            to_move.add(next_position)
+            to_move.add(boxes[next_position])
+
+            while len(positions) != 0:
+                shifts = 0
+                pp = positions.pop()
+                while True:
+                    if grid[pp] == '.':
+                        # if we're pushing left or right,
+                        # the first space we find is a
+                        # viable candidate.
+                        # Nice and easy!
+                        if movement == '<' or movement == '>':
+                            space_available = True
+                            top_points.add((pp[0] + (-dxdy[0]), pp[1] + (-dxdy[1])))
+                            to_move.clear()
+                            positions.clear()
+                            break
+
+                        # if we're pushing up or down,
+                        # we must check both halves of
+                        # the box (positions list will
+                        # have the positions of both
+                        # halves). Additionally, we also
+                        # have to check the top box(es)
+                        # don't have the other half of
+                        # their box hit a wall!
+                        # We will do the latter here
+                        second_half = boxes[(pp[0] + (-dxdy[0]), pp[1] + (-dxdy[1]))]
+
+                        if grid[(second_half[0] + dxdy[0], second_half[1] + dxdy[1])] == '.':
+                            space_available = True
+                            top_points.add((pp[0] + (-dxdy[0]), pp[1] + (-dxdy[1])))
+                            break
+                        if grid[(second_half[0] + dxdy[0], second_half[1] + dxdy[1])] == '#':
+                            space_available = False
+                            break
+                        if grid[(second_half[0] + dxdy[0], second_half[1] + dxdy[1])] == '[' or grid[(second_half[0] + dxdy[0], second_half[1] + dxdy[1])] == ']':
+                            pp = (second_half[0] + dxdy[0], second_half[1] + dxdy[1])
+                            continue
+                    elif grid[pp] == '#':
+                        space_available = False
+                        break
+                    elif grid[pp] == '[' or grid[pp] == ']':
+                        if boxes[pp] not in to_move:
+                            positions.append(boxes[pp])
+                            to_move.add(boxes[pp])
+                        to_move.add(pp)
+
+                    pp = (pp[0] + dxdy[0], pp[1] + dxdy[1])
+                    shifts += 1
+
+                if not space_available:
+                    break
+
+            if not space_available:
+                continue
+
+            if len(to_move) != 0:
+                halves = []
+                for p in to_move:
+                    halves.append(boxes[p])
+                for a in halves:
+                    to_move.add(a)
+
+                to_move = list(to_move)
+                to_move.sort(key=lambda x: (x[1], x[0]))
+                if movement == 'v':
+                    to_move.reverse()
+
+                for p in to_move:
+                    grid[(p[0] + dxdy[0], p[1])] = grid[p]
+                    grid[p] = '.'
+            else:
+                for p in top_points:
+                    for _ in range(shifts):
+                        val = grid[p]
+                        grid[(p[0] + dxdy[0], p[1] + dxdy[1])] = val
+                        grid[p] = '.'
+                        p = (p[0] + (-dxdy[0]), p[1] + (-dxdy[1]))
+        else:
+            continue
+
+        grid[current_position] = '.'
+        grid[next_position] = '@'
+        current_position = next_position
 
 def part_one(data) -> int:
     grid, instructions, start = __build_grid_and_instructions(data.splitlines())
@@ -136,14 +249,17 @@ def part_one(data) -> int:
 
 def part_two(data) -> int:
     grid, instructions, start = __modified_grid(data)
-    __print_grid(grid)
-    print(__find_boxes(grid))
-    return 0
+    __move_robot_in_second_warehouse(grid, instructions, start)
+    result = 0
+    for k, v in grid.items():
+        if v == '[':
+            result += ((100 * k[0]) + k[1])
+    return result
 
 def main() -> int:
     with open(DATA) as f:
         data = f.read()
-        #print("Part 1: " + str(part_one(data)))
+        print("Part 1: " + str(part_one(data)))
         print("Part 2: " + str(part_two(data)))
     return 0
 
