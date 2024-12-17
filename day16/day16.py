@@ -117,11 +117,11 @@ def __find_all_best_paths(grid, start, end) -> int:
         (i, j) = current_position
         neighbors = [(i - 1, j), (i, j + 1), (i + 1, j), (i, j - 1)] # N E S W
 
-        if facing == 'north':
+        if facing == 'N':
             facing_idx = 0
-        elif facing == 'east':
+        elif facing == 'E':
             facing_idx = 1
-        elif facing == 'south':
+        elif facing == 'S':
             facing_idx = 2
         else:
             facing_idx = 3
@@ -129,13 +129,13 @@ def __find_all_best_paths(grid, start, end) -> int:
         for idx, n in enumerate(neighbors):
             # map our next position to neighbours index
             if idx == 0:
-                next_facing = "north"
+                next_facing = "N"
             elif idx == 1:
-                next_facing = "east"
+                next_facing = "E"
             elif idx == 2:
-                next_facing = "south"
+                next_facing = "S"
             else:
-                next_facing = "west"
+                next_facing = "W"
 
             if n in grid and grid[n] != '#':
                 next_score = current_score + 1
