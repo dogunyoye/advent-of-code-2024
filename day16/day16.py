@@ -1,5 +1,6 @@
 import os.path
 import heapq
+import sys
 from heapq import heappop
 
 DATA = os.path.join(os.path.dirname(__file__), 'day16.txt')
@@ -92,19 +93,20 @@ def __find_lowest_reindeer_score(grid, start, end) -> int:
     raise Exception("No solution found!")
 
 
-def __find_all_best_paths(grid, start, end, target) -> int:
+def __find_all_best_paths(grid, start, end) -> int:
     pq, distances, all_paths = [], {}, []
     heapq.heappush(pq, (0, start, "east", [start]))
     distances[(start, "east")] = 0
     all_tiles = set()
+    target = sys.maxsize
 
     while len(pq) != 0:
         (current_score, current_position, facing, path) = heappop(pq)
-
         if current_score > target:
             continue
 
         if current_position == end:
+            target = min(target, current_score)
             if current_score == target:
                 all_tiles.update(path)
             continue
@@ -152,8 +154,7 @@ def part_one(data) -> int:
 
 def part_two(data) -> int:
     grid, start, end = __build_map(data)
-    target = __find_lowest_reindeer_score(grid, start, end)
-    return __find_all_best_paths(grid, start, end, target)
+    return __find_all_best_paths(grid, start, end)
 
 
 def main() -> int:
