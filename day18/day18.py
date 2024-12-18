@@ -58,13 +58,18 @@ def part_one(data) -> int:
     for f in falling_bytes[0:1024]:
         grid[f] = '#'
 
-    return __bfs((0, 0), (70, 70), grid)
+    return __bfs((0, 0), (BOUND, BOUND), grid)
+
+
+def part_two(data) -> int:
+    return 0
 
 
 def main() -> int:
     with open(DATA) as f:
         data = f.read()
         print("Part 1: " + str(part_one(data)))
+        print("Part 2: " + str(part_two(data)))
     return 0
 
 
