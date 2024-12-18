@@ -1,7 +1,10 @@
 import os.path
 import re
+from collections import deque
+
 
 DATA = os.path.join(os.path.dirname(__file__), 'day17.txt')
+
 
 class Computer(object):
 
@@ -37,7 +40,7 @@ class Computer(object):
 
         self.instruction_pointer = operand
 
-    def __bxc(self, operand):
+    def __bxc(self, _operand):
         self.registers['B'] ^= self.registers['C']
 
     def __out(self, operand):
@@ -68,6 +71,21 @@ class Computer(object):
 
             self.instruction_pointer += 2
 
+    # disassembled function specific to my input
+    # likely faster than parsing each instruction
+    def execute_program_disassembled(self):
+        a = self.registers['A']
+
+        while a != 0:
+            b = a % 8
+            b = b ^ 5
+            c = a // (2 ** b) # (1 << b)
+            b = b ^ c
+            b = b ^ 6
+            a = a // (2 ** 3) # (1 << 3)
+            self.out.append(b % 8)
+
+
     def output(self) -> str:
       return str(self.out).replace("[", "").replace("]", "").replace(" ", "")
 
@@ -83,51 +101,41 @@ def __initialise_registers_and_program(data) -> tuple:
     program = [int(x) for x in lines[len(lines) - 1].split(": ")[1].split(',')]
     return registers, program
 
+
 def __binary_convert(output) -> str:
     result = ""
     for num in output.split(","):
         result += bin(int(num))[2:]
     return result
 
+
 def part_one(data) -> str:
     registers, program = __initialise_registers_and_program(data)
     c = Computer(registers, program)
-    c.execute_program()
+    c.execute_program_disassembled()
     return c.output()
+
 
 def part_two(data) -> int:
     registers, program = __initialise_registers_and_program(data)
     program_str = str(program).replace("[", "").replace("]", "").replace(" ", "")
-    value = 0
+    program_str = program_str.replace(",", "")
 
-    # for every base 8 number we set register A to
-    # the number of output values increases.
-    # There are 16 numbers in my input program
-    # => 8^15 = 35184372088832
+    candidates = deque()
+    candidates.append((0, 0))
 
-    start = -1
+    while len(candidates) != 0:
+        (candidate, length) = candidates.popleft()
+        if length == len(program):
+            return candidate
 
-    while True:
-        registers = {"A": 8 ** value, "B": 0, "C": 0}
-        c = Computer(registers, program)
-        c.execute_program()
-        if len(c.output().split(",")) == 16:
-            start = 8 ** value
-            break
-        value += 1
-
-    while True:
-        registers = {"A": start, "B": 0, "C": 0}
-        c = Computer(registers, program)
-        c.execute_program()
-        print(start)
-        print(bin(start)[2:])
-        print(c.output())
-        print(__binary_convert(c.output()))
-        print()
-        if c.output() == program_str:
-            return start
-        start += 1
+        to_find = program_str[len(program_str) - 1 - length:]
+        for i in range(candidate*8, candidate*8 + 8):
+            c = Computer({"A": i, "B": 0, "C": 0}, program)
+            c.execute_program_disassembled()
+            expected = c.output().replace(",", "")
+            if expected.endswith(to_find):
+                candidates.append((i, length + 1))
 
 
 def main() -> int:
