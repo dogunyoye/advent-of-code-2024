@@ -102,13 +102,6 @@ def __initialise_registers_and_program(data) -> tuple:
     return registers, program
 
 
-def __binary_convert(output) -> str:
-    result = ""
-    for num in output.split(","):
-        result += bin(int(num))[2:]
-    return result
-
-
 def part_one(data) -> str:
     registers, program = __initialise_registers_and_program(data)
     c = Computer(registers, program)
