@@ -14,7 +14,7 @@ def __is_safe(level) -> bool:
 
 def __can_be_made_safe(level) -> bool:
     for idx in range(len(level)):
-        copied = copy.deepcopy(level)
+        copied = list(level)
         del copied[idx]
         if __is_safe(copied):
             return True
