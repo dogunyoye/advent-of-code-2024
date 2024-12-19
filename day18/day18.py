@@ -4,6 +4,7 @@ from collections import deque
 DATA = os.path.join(os.path.dirname(__file__), 'day18.txt')
 
 BOUND = 70
+INITIAL_DROP = 1024
 
 
 def __print_grid(grid):
@@ -18,8 +19,7 @@ def __build_falling_bytes_list(data) -> list:
     falling_bytes = []
     for line in data.splitlines():
         xy = line.split(",")
-        (x, y) = int(xy[0]), int(xy[1])
-        falling_bytes.append((x, y))
+        falling_bytes.append((int(xy[0]), int(xy[1])))
     return falling_bytes
 
 
@@ -59,7 +59,7 @@ def part_one(data) -> int:
     falling_bytes = __build_falling_bytes_list(data)
     grid = __initialise_grid()
 
-    for f in falling_bytes[0:1024]:
+    for f in falling_bytes[0:INITIAL_DROP]:
         grid[f] = '#'
 
     return __bfs((0, 0), (BOUND, BOUND), grid)[0]
@@ -69,13 +69,15 @@ def part_two(data) -> str:
     falling_bytes = __build_falling_bytes_list(data)
     grid = __initialise_grid()
 
-    for f in falling_bytes[0:1024]:
+    for f in falling_bytes[0:INITIAL_DROP]:
         grid[f] = '#'
 
     _, path = __bfs((0,0), (BOUND, BOUND), grid)
 
-    for i in range(1024, len(falling_bytes)):
+    for i in range(INITIAL_DROP, len(falling_bytes)):
         grid[falling_bytes[i]] = '#'
+        # only reevaluate the path if the newly
+        # fallen byte has fallen onto the current path
         if falling_bytes[i] in path:
             steps, path = __bfs((0,0), (BOUND, BOUND), grid)
             if steps == -1:
