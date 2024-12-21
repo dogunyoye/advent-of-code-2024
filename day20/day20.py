@@ -37,7 +37,7 @@ def manhattan_distance(point1, point2):
 
 def __bfs(grid, start, end, track_walls) -> tuple:
     queue, visited = deque(), set()
-    queue.append((start, 0, set(), []))
+    queue.append((start, 0, set(), {(start, 0)}))
 
     while len(queue) != 0:
         current_position = queue.popleft()
@@ -46,22 +46,22 @@ def __bfs(grid, start, end, track_walls) -> tuple:
         walls = current_position[2]
         path = current_position[3]
 
-        if current_position[0] == end:
-            return steps, walls, path
-
         neighbors = [(i, j - 1), (i - 1, j), (i, j + 1), (i + 1, j)]
         if track_walls:
             next_walls = set(walls)
             for n in neighbors:
                 if n in grid and grid[n] == '#':
-                    next_walls.add(n)
+                    next_walls.add((n, steps))
         else :
             next_walls = set()
 
+        if current_position[0] == end:
+            return steps, walls, path
+
         for n in neighbors:
             if n in grid and grid[n] != '#' and n not in visited:
-                new_path = list(path)
-                new_path.append(n)
+                new_path = set(path)
+                new_path.add((n, steps + 1))
                 queue.append((n, steps + 1, next_walls, new_path))
                 visited.add(n)
 
@@ -92,61 +92,26 @@ def __bfs_constrained(grid, start, end, limit) -> int:
     return -1
 
 
-def __bfs_move_through_walls(grid, start, end, saving, limit):
-    queue, visited = deque(), set()
-    cheat_start, cheat_end = (-1, -1), (-1, -1)
-    queue.append((start, cheat_start, cheat_end, 0, 20))
-    visited.add((start, cheat_start, cheat_end))
-
-    while len(queue) != 0:
-        current_position = queue.popleft()
-        i, j = current_position[0]
-        cheat_start, cheat_end = current_position[1], current_position[2]
-        steps = current_position[3]
-        wall_moves = current_position[4]
-
-        if steps >= limit:
-            continue
-
-        if current_position[0] == end:
-            saving[((limit - steps), cheat_start, cheat_end)] += 1
-            print(saving)
-            continue
-
-        neighbors = [(i, j - 1), (i - 1, j), (i, j + 1), (i + 1, j)]
-
-        for n in neighbors:
-            if n in grid and grid[n] == "#" and (n, cheat_start, cheat_end) not in visited:
-                if wall_moves > 0:
-                    if cheat_start == (-1, -1):
-                        queue.append((n, (i, j), cheat_end, steps + 1, wall_moves - 1))
-                        visited.add((n, (i, j), cheat_end))
-                    else:
-                        queue.append((n, cheat_start, cheat_end, steps + 1, wall_moves - 1))
-                        visited.add((n, cheat_start, cheat_end))
-            elif n in grid and grid[n] != "#" and (n, cheat_start, cheat_end) not in visited:
-                if grid[(i, j)] == '#' and cheat_end == (-1, -1):
-                    queue.append((n, cheat_start, n, steps + 1, wall_moves - 1))
-                    visited.add((n, cheat_start, n))
-                else:
-                    if cheat_start == (-1, -1):
-                        queue.append((n, cheat_start, cheat_end, steps + 1, wall_moves))
-                    else:
-                        queue.append((n, cheat_start, cheat_end, steps + 1, wall_moves - 1))
-                    visited.add((n, cheat_start, cheat_end))
-
-
 def part_one(data) -> int:
     racetrack, start, end = __build_racetrack(data)
     saving = defaultdict(int)
     original_score, walls, path = __bfs(racetrack, start, end, True)
 
-    for w in walls:
-        racetrack[w] = '.'
-        new_score = __bfs_constrained(racetrack, start, end, original_score)
-        if new_score != -1:
-            saving[(original_score - new_score)] += 1
-        racetrack[w] = '#'
+    for w, step in walls:
+        i, j = w
+        neighbors = [(i, j - 1), (i - 1, j), (i, j + 1), (i + 1, j)]
+        count = 0
+
+        for n in neighbors:
+            if n in racetrack and racetrack[n] != '#' and len([p for p in path if p[0] == n]) > 0:
+                count += 1
+
+        if count > 1:
+            racetrack[w] = '.'
+            new_score = __bfs_constrained(racetrack, w, end, original_score)
+            if new_score != -1:
+                saving[(original_score - (new_score + step + 1))] += 1
+            racetrack[w] = '#'
 
     result = 0
     for k, v in saving.items():
@@ -159,16 +124,23 @@ def part_one(data) -> int:
 def part_two(data) -> int:
     racetrack, start, end = __build_racetrack(data)
     saving = defaultdict(int)
-    original_score, _ = __bfs(racetrack, start, end, False)
+    original_score, _, path= __bfs(racetrack, start, end, False)
 
-    __bfs_move_through_walls(racetrack, start, end, saving, original_score)
+    for a, a_step in path:
+        for b, b_step in path:
+            if a == b:
+                continue
+            dist = manhattan_distance(a, b)
+            dist_start_end = original_score - a_step
+            cheat_way = dist + (original_score - b_step)
+            if dist <= 20:
+                saved = dist_start_end - cheat_way
+                if saved >= 100:
+                    saving[saved] += 1
 
     result = 0
-    print(saving)
     for k, v in saving.items():
-        if k[0] == 74:
-            print((k, v))
-            result += 1
+        result += v
 
     return result
 
@@ -176,7 +148,7 @@ def main() -> int:
     with open(DATA) as f:
         data = f.read()
         print("Part 1: " + str(part_one(data)))
-        # print("Part 2: " + str(part_two(data)))
+        print("Part 2: " + str(part_two(data)))
     return 0
 
 
