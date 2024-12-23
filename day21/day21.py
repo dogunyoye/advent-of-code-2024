@@ -2,7 +2,7 @@ import itertools
 import os.path
 import sys
 from collections import deque
-from functools import lru_cache
+from functools import lru_cache, cache
 from itertools import permutations
 
 DATA = os.path.join(os.path.dirname(__file__), 'day21.txt')
@@ -95,7 +95,7 @@ def __bfs(keypad_name, start, end) -> list:
     raise Exception("No solution found!")
 
 
-@lru_cache(None)
+@cache
 def get_cost(a, b, keypad_name, depth=0):
     # Cost of going from a to b on given keypad and recursion depth
     if depth == 0:
@@ -128,60 +128,50 @@ def get_code_cost(code, depth):
         cost += get_cost(a, b, "numerical", depth)
     return cost
 
-def part_one(data) -> int:
-    numerical_keypad = __build_numerical_keypad()
-    directional_keypad = __build_directional_keypad()
-    result = 0
 
+def __press_keypad(ways, level) -> list:
+    if level == 0:
+        min_len = sys.maxsize
+        for ww in ways:
+            min_len = min(min_len, len(ww))
+        return min_len
+
+    new_ways = set()
+    for w in ways:
+        start = (0, 2)
+        options = []
+        for c in w:
+            end = __find_button_position("directional", c)
+            options.append(__bfs("directional", start, end))
+            start = end
+        for o in list(itertools.product(*options)):
+            option_str = ""
+            for oo in list(o):
+                option_str += "".join(oo)
+            new_ways.add(option_str)
+
+    return __press_keypad(new_ways, level - 1)
+
+def part_one(data) -> int:
+
+    result = 0
     for code in data.splitlines():
         start = (3, 2)
-        keypad = numerical_keypad
-        ways1 = []
+
+        ways = []
         for c in code:
             end = __find_button_position("numerical", c)
-            ways1.append(__bfs( "numerical", start, end))
+            ways.append(__bfs( "numerical", start, end))
             start = end
 
         ways2 = set()
-        for o in list(itertools.product(*ways1)):
+        for o in list(itertools.product(*ways)):
             option_str = ""
             for oo in list(o):
                 option_str += "".join(oo)
             ways2.add(option_str)
 
-        ways3 = set()
-        for w in ways2:
-            start = (0, 2)
-            options = []
-            for c in w:
-                end = __find_button_position("directional", c)
-                options.append(__bfs("directional", start, end))
-                start = end
-            for o in list(itertools.product(*options)):
-                option_str = ""
-                for oo in list(o):
-                    option_str += "".join(oo)
-                ways3.add(option_str)
-
-        ways4 = set()
-        for w in ways3:
-            start = (0, 2)
-            options = []
-            for c in w:
-                end = __find_button_position("directional", c)
-                options.append(__bfs("directional", start, end))
-                start = end
-            for o in list(itertools.product(*options)):
-                option_str = ""
-                for oo in list(o):
-                    option_str += "".join(oo)
-                ways4.add(option_str)
-
-        option_min = sys.maxsize
-        for ww in ways4:
-            option_min = min(option_min, len(ww) * int(code[0:len(code)-1]))
-
-        result += option_min
+        result += __press_keypad(ways2, 2) * int(code[0:len(code)-1])
     return result
 
 
@@ -198,7 +188,7 @@ def main() -> int:
     with open(DATA) as f:
         data = f.read()
         print("Part 1: " + str(part_one(data)))
-        print("Part 2: " + str(part_two(data)))
+        # print("Part 2: " + str(part_two(data)))
     return 0
 
 
