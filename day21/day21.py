@@ -56,6 +56,7 @@ def __option_valid(option, start, keypad_name) -> bool:
 
     return True
 
+
 def __bfs(keypad_name, start, end) -> list:
     queue, visited = deque(), set()
     queue.append((start, '', []))
@@ -152,8 +153,8 @@ def __press_keypad(ways, level) -> list:
 
     return __press_keypad(new_ways, level - 1)
 
-def part_one(data) -> int:
 
+def part_one(data) -> int:
     result = 0
     for code in data.splitlines():
         start = (3, 2)
