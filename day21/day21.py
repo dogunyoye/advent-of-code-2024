@@ -2,6 +2,7 @@ import itertools
 import os.path
 import sys
 from collections import deque
+from functools import lru_cache
 from itertools import permutations
 
 DATA = os.path.join(os.path.dirname(__file__), 'day21.txt')
@@ -23,10 +24,16 @@ def __build_directional_keypad() -> dict:
     }
 
 
-def __find_button_position(keypad, button) -> tuple:
+def __find_button_position(keypad_name, button) -> tuple:
+    if keypad_name == "directional":
+        keypad = __build_directional_keypad()
+    else:
+        keypad = __build_numerical_keypad()
+
     for k, v in keypad.items():
         if v == button:
             return k
+
     raise Exception("Button not found!")
 
 
@@ -49,10 +56,15 @@ def __option_valid(option, start, keypad_name) -> bool:
 
     return True
 
-def __bfs(keypad, keypad_name, start, end) -> list:
+def __bfs(keypad_name, start, end) -> list:
     queue, visited = deque(), set()
     queue.append((start, '', []))
     paths = []
+
+    if keypad_name == "directional":
+        keypad = __build_directional_keypad()
+    else:
+        keypad = __build_numerical_keypad()
 
     while len(queue) != 0:
         current_position = queue.popleft()
@@ -83,17 +95,38 @@ def __bfs(keypad, keypad_name, start, end) -> list:
     raise Exception("No solution found!")
 
 
-def __press_keypad(keypad, keypad_name, code, start, level) -> list:
-    if level == 3:
-        return code
+@lru_cache(None)
+def get_cost(a, b, keypad_name, depth=0):
+    # Cost of going from a to b on given keypad and recursion depth
+    if depth == 0:
+        return min([len(x) for x in __bfs("directional", a, b)])
 
-    new_code = []
-    for c in code:
-        end = __find_button_position(keypad, c)
-        new_code.extend(__bfs(keypad, keypad_name, start, end))
-        start = end
+    ways = __bfs(keypad_name, a, b)
+    options = []
+    for o in ways:
+        option_str = ""
+        for oo in list(o):
+            option_str += "".join(oo)
+        options.append(option_str)
 
-    return __press_keypad(__build_directional_keypad(), "directional", new_code, (0, 2), level + 1)
+    best_cost = 1 << 60
+    for seq in options:
+        seq = "A" + seq
+        cost = 0
+        for i in range(len(seq) - 1):
+            a, b = __find_button_position("directional", seq[i]), __find_button_position("directional", seq[i + 1])
+            cost += get_cost(a, b, "directional", depth - 1)
+        best_cost = min(best_cost, cost)
+    return best_cost
+
+
+def get_code_cost(code, depth):
+    code = "A" + code
+    cost = 0
+    for i in range(len(code) - 1):
+        a, b = __find_button_position("numerical", code[i]), __find_button_position("numerical", code[i + 1])
+        cost += get_cost(a, b, "numerical", depth)
+    return cost
 
 def part_one(data) -> int:
     numerical_keypad = __build_numerical_keypad()
@@ -105,8 +138,8 @@ def part_one(data) -> int:
         keypad = numerical_keypad
         ways1 = []
         for c in code:
-            end = __find_button_position(keypad, c)
-            ways1.append(__bfs(keypad, "numerical", start, end))
+            end = __find_button_position("numerical", c)
+            ways1.append(__bfs( "numerical", start, end))
             start = end
 
         ways2 = set()
@@ -120,10 +153,9 @@ def part_one(data) -> int:
         for w in ways2:
             start = (0, 2)
             options = []
-            keypad = directional_keypad
             for c in w:
-                end = __find_button_position(keypad, c)
-                options.append(__bfs(keypad, "directional", start, end))
+                end = __find_button_position("directional", c)
+                options.append(__bfs("directional", start, end))
                 start = end
             for o in list(itertools.product(*options)):
                 option_str = ""
@@ -135,10 +167,9 @@ def part_one(data) -> int:
         for w in ways3:
             start = (0, 2)
             options = []
-            keypad = directional_keypad
             for c in w:
-                end = __find_button_position(keypad, c)
-                options.append(__bfs(keypad, "directional", start, end))
+                end = __find_button_position("directional", c)
+                options.append(__bfs("directional", start, end))
                 start = end
             for o in list(itertools.product(*options)):
                 option_str = ""
@@ -153,10 +184,21 @@ def part_one(data) -> int:
         result += option_min
     return result
 
+
+# William Feng's solution - https://github.com/womogenes/AoC-2024-Solutions/blob/main/day_21/p2_day_21.py
+# Explainer video - https://www.youtube.com/watch?v=q5I6ZvJmHEo
+def part_two(data) -> int:
+    result = 0
+    for code in data.splitlines():
+        result += get_code_cost(code, 25) * int(code[0:len(code)-1])
+    return result
+
+
 def main() -> int:
     with open(DATA) as f:
         data = f.read()
         print("Part 1: " + str(part_one(data)))
+        print("Part 2: " + str(part_two(data)))
     return 0
 
 
