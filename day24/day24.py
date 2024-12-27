@@ -20,7 +20,7 @@ def __build_wires_and_gates(data) -> tuple:
 
     return wires, deque(lines[gates_idx:])
 
-def __build_operation_tree(data) -> dict:
+def __build_gates(data) -> dict:
     lines = data.splitlines()
     operations = {}
     gates_idx = -1
@@ -32,10 +32,17 @@ def __build_operation_tree(data) -> dict:
 
     for l in lines[gates_idx:]:
         (l, op, r, dest_wire) = re.findall(r'([a-z0-9]{3}) (AND|OR|XOR) ([a-z0-9]{3}) -> ([a-z0-9]{3})', l)[0]
-        operations[(l, r)] = dest_wire
+        operations[(l, op, r)] = dest_wire
 
     return operations
 
+
+def __is_input_wire(wire) -> bool:
+    return wire.startswith('x') or wire.startswith('y')
+
+
+def __are_inputs_first_bits(w1, w2) -> bool:
+    return w1.endswith("00") and w2.endswith("00")
 
 def part_one(data) -> int:
     wires, gates = __build_wires_and_gates(data)
@@ -63,14 +70,50 @@ def part_one(data) -> int:
     return int(answer, 2)
 
 
+# Inspiration from:
+# https://www.reddit.com/r/adventofcode/comments/1hl698z/comment/m3lnhrw/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+# https://github.com/Gmark2000/advent-of-code-2024-MarkGozner/blob/main/Day24/Program.cs#L112
 def part_two(data) -> str:
-    return ""
+    gates = __build_gates(data)
+    faulty_gates = []
+
+    for k, v in gates.items():
+        left, op, right = k
+        dest = v
+        is_faulty = False
+
+        if dest.startswith('z') and dest != "z45":
+            is_faulty = op != "XOR"
+        elif not dest.startswith('z') and not __is_input_wire(left) and not __is_input_wire(right):
+            is_faulty = op == "XOR"
+        elif __is_input_wire(left) and __is_input_wire(right) and not __are_inputs_first_bits(left, right):
+            if op == "XOR":
+                expected_next_type = "XOR"
+            else:
+                expected_next_type = "OR"
+
+            feeds = False
+            for kk, vv in gates.items():
+                if kk == k:
+                    continue
+
+                other_left, other_op, other_right = kk
+                if (other_left == dest or other_right == dest) and other_op == expected_next_type:
+                    feeds = True
+                    break
+
+            is_faulty = not feeds
+
+        if is_faulty:
+            faulty_gates.append(dest)
+
+    return ",".join(sorted(faulty_gates))
 
 
 def main() -> int:
     with open(DATA) as f:
         data = f.read()
-        print("Part 1: " + str(part_one(data)))
+        # print("Part 1: " + str(part_one(data)))
         print("Part 2: " + part_two(data))
     return 0
 
