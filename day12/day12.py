@@ -135,20 +135,19 @@ def __cost_of_plot(grid, starts, is_part_two) -> int:
     return area * perimeter
 
 
-def part_one(data) -> int:
+def solve(data, is_part_two) -> int:
     grid, starts = __build_map(data)
     result = 0
     while len(starts) != 0:
-        result += __cost_of_plot(grid, starts, False)
+        result += __cost_of_plot(grid, starts, is_part_two)
     return result
+
+def part_one(data) -> int:
+    return solve(data, False)
 
 
 def part_two(data) -> int:
-    grid, starts = __build_map(data)
-    result = 0
-    while len(starts) != 0:
-        result += __cost_of_plot(grid, starts, True)
-    return result
+    return solve(data, True)
 
 
 def main() -> int:
