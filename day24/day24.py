@@ -113,7 +113,7 @@ def part_two(data) -> str:
 def main() -> int:
     with open(DATA) as f:
         data = f.read()
-        # print("Part 1: " + str(part_one(data)))
+        print("Part 1: " + str(part_one(data)))
         print("Part 2: " + part_two(data))
     return 0
 
