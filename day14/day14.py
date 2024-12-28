@@ -2,6 +2,8 @@ import os.path
 import re
 import sys
 
+from PIL import Image
+
 DATA = os.path.join(os.path.dirname(__file__), 'day14.txt')
 
 
@@ -18,6 +20,20 @@ def __print_grid(grid, max_x, max_y):
             else:
                 line += str(count)
         print(line)
+
+
+def __generate_image(grid, max_x, max_y):
+    img = Image.new('RGB', (max_x + 1, max_y + 1), "black")
+    pixels = img.load()
+    robot_positions = set(grid.values())
+
+    for y in range(img.size[1]):
+        for x in range(img.size[0]):
+            val = 0
+            if (x, y) in robot_positions:
+                val = 1
+            pixels[x, y] = (val * 100, val * 100, val * 100)
+    img.save('christmas_tree.png', 'PNG')
 
 
 def __build_robots_map(data) -> (dict, dict, int, int):
@@ -67,6 +83,7 @@ def part_two(data) -> int:
         __move_robots(robots, velocities, 1, max_x, max_y)
         seconds += 1
         if len(set(robots.values())) == len(robots.keys()):
+            # __generate_image(robots, max_x, max_y)
             return seconds
 
 
