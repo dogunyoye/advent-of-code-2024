@@ -38,6 +38,7 @@ def manhattan_distance(point1, point2):
 def __bfs(grid, start, end, track_walls) -> tuple:
     queue, visited = deque(), set()
     queue.append((start, 0, set(), {(start, 0)}))
+    visited.add(start)
 
     while len(queue) != 0:
         current_position = queue.popleft()
@@ -68,50 +69,33 @@ def __bfs(grid, start, end, track_walls) -> tuple:
     raise Exception("No solution!")
 
 
-def __bfs_constrained(grid, start, end, limit) -> int:
-    queue, visited = deque(), set()
-    queue.append((start, 0))
-
-    while len(queue) != 0:
-        current_position = queue.popleft()
-        i, j = current_position[0]
-        steps = current_position[1]
-
-        if steps >= limit:
-            continue
-
-        if current_position[0] == end:
-            return steps
-
-        neighbors = [(i, j - 1), (i - 1, j), (i, j + 1), (i + 1, j)]
-        for n in neighbors:
-            if n in grid and grid[n] != '#' and n not in visited:
-                queue.append((n, steps + 1))
-                visited.add(n)
-
-    return -1
-
-
 def part_one(data) -> int:
     racetrack, start, end = __build_racetrack(data)
     saving = defaultdict(int)
     original_score, walls, path = __bfs(racetrack, start, end, True)
+    path_map = {}
+    for p, s in path:
+        path_map[p] = s
+
+    to_check = set()
 
     for w, step in walls:
         i, j = w
         neighbors = [(i, j - 1), (i - 1, j), (i, j + 1), (i + 1, j)]
         count = 0
+        ns = []
 
         for n in neighbors:
-            if n in racetrack and racetrack[n] != '#' and len([p for p in path if p[0] == n]) > 0:
+            if n in racetrack and racetrack[n] != '#' and n in path_map:
                 count += 1
+                ns.append((n, step))
 
         if count > 1:
-            racetrack[w] = '.'
-            new_score = __bfs_constrained(racetrack, w, end, original_score)
-            if new_score != -1:
-                saving[(original_score - (new_score + step + 1))] += 1
-            racetrack[w] = '#'
+            to_check.update(ns)
+
+    for n, step in to_check:
+        new_score = original_score - path_map[n]
+        saving[(original_score - (new_score + step + 1))] += 1
 
     result = 0
     for k, v in saving.items():
