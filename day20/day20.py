@@ -35,35 +35,30 @@ def manhattan_distance(point1, point2):
     return abs(point1[0] - point2[0]) + abs(point1[1] - point2[1])
 
 
-def __bfs(grid, start, end, track_walls) -> tuple:
+def __traverse_racetrack(grid, start, end, track_walls) -> tuple:
     queue, visited = deque(), set()
-    queue.append((start, 0, set(), {(start, 0)}))
+    walls = set()
+    path = {(start, 0)}
+
+    queue.append((start, 0, walls, path))
     visited.add(start)
 
     while len(queue) != 0:
-        current_position = queue.popleft()
-        i, j = current_position[0]
-        steps = current_position[1]
-        walls = current_position[2]
-        path = current_position[3]
+        (i, j), steps, walls, path = queue.popleft()
 
         neighbors = [(i, j - 1), (i - 1, j), (i, j + 1), (i + 1, j)]
         if track_walls:
-            next_walls = set(walls)
             for n in neighbors:
                 if n in grid and grid[n] == '#':
-                    next_walls.add((n, steps))
-        else :
-            next_walls = set()
+                    walls.add((n, steps))
 
-        if current_position[0] == end:
+        if (i, j) == end:
             return steps, walls, path
 
         for n in neighbors:
             if n in grid and grid[n] != '#' and n not in visited:
-                new_path = set(path)
-                new_path.add((n, steps + 1))
-                queue.append((n, steps + 1, next_walls, new_path))
+                path.add((n, steps + 1))
+                queue.append((n, steps + 1, walls, path))
                 visited.add(n)
 
     raise Exception("No solution!")
@@ -72,7 +67,8 @@ def __bfs(grid, start, end, track_walls) -> tuple:
 def part_one(data) -> int:
     racetrack, start, end = __build_racetrack(data)
     saving = defaultdict(int)
-    original_score, walls, path = __bfs(racetrack, start, end, True)
+    original_score, walls, path = __traverse_racetrack(racetrack, start, end, True)
+
     path_map = {}
     for p, s in path:
         path_map[p] = s
@@ -108,7 +104,8 @@ def part_one(data) -> int:
 def part_two(data) -> int:
     racetrack, start, end = __build_racetrack(data)
     saving = defaultdict(int)
-    original_score, _, path= __bfs(racetrack, start, end, False)
+
+    original_score, _, path = __traverse_racetrack(racetrack, start, end, False)
 
     for a, a_step in path:
         for b, b_step in path:
@@ -128,6 +125,7 @@ def part_two(data) -> int:
 
     return result
 
+
 def main() -> int:
     with open(DATA) as f:
         data = f.read()
@@ -138,4 +136,3 @@ def main() -> int:
 
 if __name__ == '__main__':
     raise SystemExit(main())
-
