@@ -14,7 +14,7 @@ def __print_grid(grid):
         print(line)
 
 
-def __build_map(data) -> (dict, tuple):
+def __build_map(data) -> tuple:
     i = 0
     grid = {}
     starts = []
