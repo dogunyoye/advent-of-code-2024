@@ -14,7 +14,7 @@ def __print_grid(grid):
         print(line)
 
 
-def __build_map(data) -> (dict, tuple):
+def __build_map(data) -> dict:
     i = 0
     grid = {}
     for line in data.splitlines():
