@@ -67,20 +67,21 @@ def __blink_recursive(stone, blink) -> int:
 
     if stone == 0:
         return __blink_recursive(1, blink + 1)
-    elif len(str(stone)) % 2 == 0:
+
+    if len(str(stone)) % 2 == 0:
         num_str = str(stone)
         half = len(num_str) // 2
         left, right = num_str[0:half], num_str[half:]
         return __blink_recursive(int(left), blink + 1) + __blink_recursive(int(right), blink + 1)
-    else:
-        return __blink_recursive(stone * 2024, blink + 1)
+
+    return __blink_recursive(stone * 2024, blink + 1)
 
 
 def part_one(data) -> int:
     result = 0
     for n in [int(ele) for ele in data.split()]:
         nums = dllist([n])
-        for i in range(25):
+        for _ in range(25):
             __blink_naive(nums)
         result += len(nums)
     return result
@@ -91,7 +92,7 @@ def part_two(data) -> int:
     for k in [int(ele) for ele in data.split()]:
         numbers[k] = 1
 
-    for i in range(75):
+    for _ in range(75):
         __blink_optimised(numbers)
 
     result = 0

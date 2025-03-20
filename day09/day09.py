@@ -1,4 +1,3 @@
-import copy
 import os.path
 from collections import deque
 
@@ -22,13 +21,13 @@ def __build_disk_map(data) -> tuple:
     for idx, c in enumerate(data):
         if idx % 2 == 0:
             f_idx = rolling_idx
-            for i in range(int(c)):
+            for _ in range(int(c)):
                 rolling_idx += 1
                 disk_map.append((str(id_num),))
             disk_map_sizes[id_num] = (f_idx, int(c))
             id_num += 1
         else:
-            for i in range(int(c)):
+            for _ in range(int(c)):
                 rolling_idx += 1
                 disk_map.append(('.',))
 
@@ -76,7 +75,7 @@ def part_one(data) -> int:
 
 
 def part_two(data) -> int:
-    disk_map, free_space_indices, disk_map_sizes = __build_disk_map(data)
+    disk_map, _, disk_map_sizes = __build_disk_map(data)
     keys = disk_map_sizes.keys()
     checksum = 0
 
