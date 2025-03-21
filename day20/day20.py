@@ -120,7 +120,7 @@ def part_two(data) -> int:
                     saving[saved] += 1
 
     result = 0
-    for k, v in saving.items():
+    for v in saving.values():
         result += v
 
     return result
