@@ -103,7 +103,7 @@ def part_one(data) -> int:
 
 def part_two(data) -> int:
     racetrack, start, end = __build_racetrack(data)
-    saving = defaultdict(int)
+    result = 0
 
     original_score, _, path = __traverse_racetrack(racetrack, start, end, False)
 
@@ -117,12 +117,7 @@ def part_two(data) -> int:
             if dist <= 20:
                 saved = dist_start_end - cheat_way
                 if saved >= 100:
-                    saving[saved] += 1
-
-    result = 0
-    for v in saving.values():
-        result += v
-
+                    result += 1
     return result
 
 
