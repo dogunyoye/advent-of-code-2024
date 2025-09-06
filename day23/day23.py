@@ -14,7 +14,7 @@ def bors_kerbosch(r, p, x, g, c):
             c.append(sorted(r))
         return
 
-    (d, pivot) = max([(len(g[v]), v) for v in p.union(x)])
+    pivot = max([(len(g[v]), v) for v in p.union(x)])
 
     for v in p.difference(g[pivot]):
         bors_kerbosch(r.union({v}), p.intersection(g[v]), x.intersection(g[v]), g, c)
