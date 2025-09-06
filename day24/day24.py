@@ -93,7 +93,7 @@ def part_two(data) -> str:
                 expected_next_type = "OR"
 
             feeds = False
-            for kk, vv in gates.items():
+            for kk in gates.keys():
                 if kk == k:
                     continue
 
