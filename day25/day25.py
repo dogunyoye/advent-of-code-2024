@@ -6,15 +6,15 @@ DATA = os.path.join(os.path.dirname(__file__), 'day25.txt')
 
 def __build_locks_and_keys(data) -> tuple:
     lines = data.splitlines()
+
     locks, keys = [], []
+    is_lock = False
+    end_idx_offset = 6
 
     for i in range(0, len(lines), 8):
         if lines[i] == "#####":
             is_lock = True
             end_idx_offset = 7
-        else:
-            is_lock = False
-            end_idx_offset = 6
 
         config = defaultdict(int)
         for c in range(5):
