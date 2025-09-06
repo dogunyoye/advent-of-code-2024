@@ -2,7 +2,7 @@ import itertools
 import os.path
 import sys
 from collections import deque
-from functools import lru_cache, cache
+from functools import cache
 from itertools import permutations
 
 DATA = os.path.join(os.path.dirname(__file__), 'day21.txt')
