@@ -17,7 +17,7 @@ def __build_orderings_maps(data) -> dict:
     return ordering
 
 
-def __build_updates_list(data) -> []:
+def __build_updates_list(data) -> list:
     updates = []
     for line in data.splitlines():
         if "," in line:
