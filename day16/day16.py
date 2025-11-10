@@ -29,7 +29,7 @@ def __print_grid_with_path(grid, path):
         print(line)
 
 
-def __build_map(data) -> (dict, tuple):
+def __build_map(data) -> tuple:
     i = 0
     grid = {}
     start, end = (-1, -1), (-1, -1)
@@ -41,7 +41,7 @@ def __build_map(data) -> (dict, tuple):
             if c == 'E':
                 end = (i, j)
         i += 1
-    return grid, start, end
+    return grid, (start, end)
 
 
 def __find_lowest_reindeer_score(grid, start, end) -> int:
@@ -148,12 +148,12 @@ def __find_all_best_paths(grid, start, end) -> int:
     return len(all_tiles)
 
 def part_one(data) -> int:
-    grid, start, end = __build_map(data)
+    grid, (start, end) = __build_map(data)
     return __find_lowest_reindeer_score(grid, start, end)
 
 
 def part_two(data) -> int:
-    grid, start, end = __build_map(data)
+    grid, (start, end) = __build_map(data)
     return __find_all_best_paths(grid, start, end)
 
 
