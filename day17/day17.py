@@ -130,6 +130,8 @@ def part_two(data) -> int:
             if expected.endswith(to_find):
                 candidates.append((i, length + 1))
 
+    raise Exception("No solution found!")
+
 
 def main() -> int:
     with open(DATA) as f:
