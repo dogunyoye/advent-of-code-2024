@@ -36,7 +36,7 @@ def __generate_image(grid, max_x, max_y):
     img.save('christmas_tree.png', 'PNG')
 
 
-def __build_robots_map(data) -> (dict, dict, int, int):
+def __build_robots_map(data) -> tuple:
     robots = {}
     velocities = {}
     robot_id = 0
