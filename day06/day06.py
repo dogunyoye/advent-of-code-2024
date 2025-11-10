@@ -13,7 +13,7 @@ def __print_grid(grid):
         print(line)
 
 
-def __build_map(data) -> (dict, tuple):
+def __build_map(data) -> tuple:
     i = 0
     grid = {}
     start = (-1, -1)
@@ -26,7 +26,7 @@ def __build_map(data) -> (dict, tuple):
     return grid, start
 
 
-def __turn(facing) -> chr:
+def __turn(facing) -> str:
     if facing == '^':
         return '>'
     if facing == '>':
@@ -35,6 +35,7 @@ def __turn(facing) -> chr:
         return '<'
     if facing == '<':
         return '^'
+    raise Exception("Unknown character direction: " + facing)
 
 
 def __move(position, grid) -> tuple:
