@@ -189,7 +189,7 @@ def main() -> int:
     with open(DATA) as f:
         data = f.read()
         print("Part 1: " + str(part_one(data)))
-        # print("Part 2: " + str(part_two(data)))
+        print("Part 2: " + str(part_two(data)))
     return 0
 
 
