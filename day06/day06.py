@@ -78,7 +78,7 @@ def __simulate_patrol(grid, current_position) -> set:
 def __loop_found(grid, current_position) -> bool:
     positions = set()
     while current_position in grid:
-        if current_position in grid and (current_position, grid[current_position]) in positions:
+        if (current_position, grid[current_position]) in positions:
             return True
         positions.add((current_position, grid[current_position]))
         current_position = __move(current_position, grid)
@@ -86,21 +86,24 @@ def __loop_found(grid, current_position) -> bool:
 
 
 def part_one(data) -> int:
-    grid, current_position = __build_map(data)
-    return len(__simulate_patrol(grid, current_position))
+    grid, start = __build_map(data)
+    return len(__simulate_patrol(grid, start))
 
 
 def part_two(data) -> int:
-    grid, current_position = __build_map(data)
-    open_positions = __simulate_patrol(grid, current_position)
-    open_positions.remove(current_position)
+    grid, start = __build_map(data)
+    open_positions = __simulate_patrol(grid, start)
+    open_positions.remove(start)
     loops = 0
 
     for p in open_positions:
-        grid, current_position = __build_map(data)
         grid[p] = '#'
-        if __loop_found(grid, current_position):
+        if __loop_found(grid, start):
             loops += 1
+
+        # reset back to starting state
+        grid[p] = '.'
+        grid[start] = '^'
 
     return loops
 
