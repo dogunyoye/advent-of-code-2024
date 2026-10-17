@@ -8,10 +8,10 @@ def __build_locks_and_keys(data) -> tuple:
     lines = data.splitlines()
 
     locks, keys = [], []
-    is_lock = False
-    end_idx_offset = 6
 
     for i in range(0, len(lines), 8):
+        is_lock = False
+        end_idx_offset = 6
         if lines[i] == "#####":
             is_lock = True
             end_idx_offset = 7
