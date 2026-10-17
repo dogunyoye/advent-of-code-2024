@@ -44,18 +44,18 @@ committed — place your own copy at `dayNN/dayNN.txt`. They are ignored by
 
 ## Days
 
-| Day | Puzzle | Day | Puzzle |
-| --- | ------ | --- | ------ |
-| 01 | Historian Hysteria | 14 | Restroom Redoubt |
-| 02 | Red-Nosed Reports | 15 | Warehouse Woes |
-| 03 | Mull It Over | 16 | Reindeer Maze |
-| 04 | Ceres Search | 17 | Chronospatial Computer |
-| 05 | Print Queue | 18 | RAM Run |
-| 06 | Guard Gallivant | 19 | Linen Layout |
-| 07 | Bridge Repair | 20 | Race Condition |
-| 08 | Resonant Collinearity | 21 | Keypad Conundrum |
-| 09 | Disk Fragmenter | 22 | Monkey Market |
-| 10 | Hoof It | 23 | LAN Party |
-| 11 | Plutonian Pebbles | 24 | Crossed Wires |
-| 12 | Garden Groups | 25 | Code Chronicle |
-| 13 | Claw Contraption | | |
+| Day | Puzzle                | Day | Puzzle                 |
+|-----|-----------------------|-----|------------------------|
+| 01  | Historian Hysteria    | 14  | Restroom Redoubt       |
+| 02  | Red-Nosed Reports     | 15  | Warehouse Woes         |
+| 03  | Mull It Over          | 16  | Reindeer Maze          |
+| 04  | Ceres Search          | 17  | Chronospatial Computer |
+| 05  | Print Queue           | 18  | RAM Run                |
+| 06  | Guard Gallivant       | 19  | Linen Layout           |
+| 07  | Bridge Repair         | 20  | Race Condition         |
+| 08  | Resonant Collinearity | 21  | Keypad Conundrum       |
+| 09  | Disk Fragmenter       | 22  | Monkey Market          |
+| 10  | Hoof It               | 23  | LAN Party              |
+| 11  | Plutonian Pebbles     | 24  | Crossed Wires          |
+| 12  | Garden Groups         | 25  | Code Chronicle         |
+| 13  | Claw Contraption      |     |                        |
