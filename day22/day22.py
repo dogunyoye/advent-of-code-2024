@@ -27,7 +27,7 @@ def __find_max_bananas(secret_numbers, differences) -> int:
         changes = defaultdict(int)
         for i in range(1997):
             seq = tuple(v[i:i + 4])
-            if changes[seq] == 0:
+            if seq not in changes:
                 changes[seq] = secret_numbers[k][i + 4]
         for kk, vv in changes.items():
             sequences[kk].append(vv)
