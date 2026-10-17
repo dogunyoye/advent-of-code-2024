@@ -2,39 +2,7 @@ import os.path
 from collections import defaultdict
 from functools import cache
 
-from pyllist import dllist
-
 DATA = os.path.join(os.path.dirname(__file__), 'day11.txt')
-
-
-def __blink_naive(numbers):
-    to_insert = -1
-    skip = False
-    original_size = len(numbers)
-
-    for idx, node in enumerate(numbers.iternodes()):
-        if skip:
-            continue
-
-        if to_insert != -1:
-            numbers.insert(to_insert, before=node)
-            to_insert = -1
-
-        if node.value == 0:
-            node.value = 1
-        elif len(str(node.value)) % 2 == 0:
-            num_str = str(node.value)
-            half = len(num_str) // 2
-            left, right = num_str[0:half], num_str[half:]
-            node.value = int(left)
-
-            if idx == original_size - 1:
-                numbers.insert(int(right), after=node)
-                skip = True
-            else:
-                to_insert = int(right)
-        else:
-            node.value *= 2024
 
 
 def __blink_optimised(numbers):
@@ -77,28 +45,23 @@ def __blink_recursive(stone, blink) -> int:
     return __blink_recursive(stone * 2024, blink + 1)
 
 
-def part_one(data) -> int:
-    result = 0
-    for n in [int(ele) for ele in data.split()]:
-        nums = dllist([n])
-        for _ in range(25):
-            __blink_naive(nums)
-        result += len(nums)
-    return result
-
-
-def part_two(data) -> int:
+def __count_stones(data, blinks) -> int:
     numbers = defaultdict(int)
     for k in [int(ele) for ele in data.split()]:
         numbers[k] = 1
 
-    for _ in range(75):
+    for _ in range(blinks):
         __blink_optimised(numbers)
 
-    result = 0
-    for v in numbers.values():
-        result += v
-    return result
+    return sum(numbers.values())
+
+
+def part_one(data) -> int:
+    return __count_stones(data, 25)
+
+
+def part_two(data) -> int:
+    return __count_stones(data, 75)
 
 
 def __part_two_recursive(data) -> int:

@@ -1,4 +1,18 @@
-day*/*.txt
-*.xml
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+venv/
+
+# IDE / editor config
+.idea/
 *.iml
-.idea
+*.xml
+
+# Advent of Code puzzle inputs (personal, not redistributed)
+day*/*.txt
+
+# Generated visualisation output (regenerate with the matching *_viz.py)
+day*/*_viz.html
