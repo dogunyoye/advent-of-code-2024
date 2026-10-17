@@ -10,8 +10,6 @@ day01/
   day01.txt       # puzzle input (git-ignored)
   __init__.py
 ...
-day15/
-  day15_viz.py    # optional HTML visualisation generator
 day14/
   christmas_tree.png
 ```
@@ -43,17 +41,6 @@ python -m day01.day01
 Puzzle inputs (`day*/*.txt`) are personal to each account and are **not**
 committed — place your own copy at `dayNN/dayNN.txt`. They are ignored by
 `.gitignore`.
-
-## Visualisations
-
-A couple of days ship an optional animated HTML visualiser (standard library
-only). It re-simulates the puzzle and writes a self-contained `.html` file
-next to the script, which you can open in any browser:
-
-```sh
-python day15/day15_viz.py   # -> day15/day15_viz.html
-python day20/day20_viz.py   # -> day20/day20_viz.html
-```
 
 ## Days
 
